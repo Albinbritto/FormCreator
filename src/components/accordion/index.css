@@ -1,0 +1,23 @@
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accordion-title {
+  background: #b6b2b2;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.accordion-body {
+  border: 1px solid #d4d4d4;
+  border-top: none;
+  padding: 10px;
+}
+
+.accordion-title:hover {
+  cursor: pointer;
+}

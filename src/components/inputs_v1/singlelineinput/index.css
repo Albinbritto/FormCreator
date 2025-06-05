@@ -1,0 +1,8 @@
+.single-line-input,
+.single-line-input:focus {
+  border: none;
+  border-bottom: 1px dashed #d9d9d9;
+  border-radius: inherit;
+  outline: none;
+  box-shadow: none;
+}

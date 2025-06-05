@@ -1,0 +1,3 @@
+.textarea-wrapper textarea.no-resize {
+  resize: none;
+}

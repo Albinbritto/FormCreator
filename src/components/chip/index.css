@@ -1,0 +1,17 @@
+.chip {
+  padding: 0.1rem 1rem;
+  background: #e4e4e4;
+  border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.chip:hover {
+  cursor: pointer;
+}
+
+.chip-close-icon {
+  margin-left: 0.5rem;
+  display: flex;
+  font-size: 0.7rem;
+}

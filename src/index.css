@@ -1,0 +1,30 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: rgb(241, 243, 249);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+input,
+button {
+  font-family: inherit;
+}
+
+input {
+  margin: 0;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+#root {
+  height: inherit;
+}

@@ -1,0 +1,46 @@
+.stepper {
+  display: flex;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+  flex: 1;
+}
+
+.stepper-step:not(:first-child)::before {
+  content: "";
+  background: #e4e4e4;
+  height: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 12px;
+  left: -50%;
+  right: 50%;
+}
+
+.stepper-step-index span {
+  z-index: 10;
+  background: #1677ff;
+  position: relative;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  color: #fff;
+}
+
+.stepper-step-name {
+  font-size: 0.8rem;
+}
+
+.stepper-step.completed .stepper-step-index span,
+.stepper-step.completed::before {
+  background: green;
+}
+
+.stepper-step:hover {
+  cursor: pointer;
+}
