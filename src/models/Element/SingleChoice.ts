@@ -9,16 +9,19 @@ interface SingleChoiceOption {
 interface ISingleChoiceElement extends IElementBase {
   options?: SingleChoiceOption[];
   value?: string;
+  isDropdown?: boolean;
 }
 
 export class SingleChoiceElement extends ElementBase {
   options: SingleChoiceOption[];
   value?: string;
+  isDropdown: boolean;
 
   constructor(props: ISingleChoiceElement) {
     super(props);
     this.options = props.options || [];
     this.value = props.value;
+    this.isDropdown = props.isDropdown || false;
   }
 
   override updateProperties(newProps: Partial<ISingleChoiceElement>): void {
@@ -26,6 +29,8 @@ export class SingleChoiceElement extends ElementBase {
 
     if (newProps.options !== undefined) this.options = newProps.options;
     if (newProps.value !== undefined) this.value = newProps.value;
+    if (newProps.isDropdown !== undefined)
+      this.isDropdown = newProps.isDropdown;
   }
 
   addOption(option: SingleChoiceOption): void {
@@ -48,6 +53,7 @@ export class SingleChoiceElement extends ElementBase {
       ...super.toJSON(),
       options: this.options,
       value: this.value,
+      isDropdown: this.isDropdown,
     };
   }
 
@@ -65,8 +71,13 @@ export class SingleChoiceElement extends ElementBase {
         value: this.options,
         type: "choicesInput",
         disabled: true,
-        fieldId: this.fieldId,
-        pageId: this.pageId,
+      },
+      {
+        label: "Is Dropdown",
+        id: "isDropdown",
+        name: "isDropdown",
+        value: this.isDropdown,
+        type: "checkbox",
       },
     ];
   }

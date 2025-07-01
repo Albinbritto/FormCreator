@@ -1,9 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
-
 import {
   IFieldMetaData,
   IFormMetaData,
   IPageMetaData,
+  IPropertyMetaData,
 } from "../pages/FormBuilder/type";
 import { TextElement } from "./Element/TextElement";
 import { NumberElement } from "./Element/NumberElement";
@@ -14,6 +13,8 @@ import { MultipleChoiceElement } from "./Element/MultipleChoice";
 import { SingleChoiceElement } from "./Element/SingleChoice";
 import { DatePickerElement } from "./Element/DatePicker";
 import { ButtonPositionType } from "../components/Form/type";
+import { RegisterOptions } from "react-hook-form";
+import { generateUniqueId } from "../utils/util";
 
 export type Field = SelectElement | TextElement | NumberElement | ElementBase;
 
@@ -24,7 +25,7 @@ export class Form {
   pages: Page[];
 
   constructor(props?: Partial<IFormMetaData>) {
-    this.formId = props?.formId || uuidv4();
+    this.formId = props?.formId || generateUniqueId();
     this.formName = props?.formName || "untitled form";
     this.formDescription = props?.formDescription || "no description";
     this.pages = props?.pages
@@ -85,7 +86,7 @@ export class Page {
   buttonPosition: ButtonPositionType;
 
   constructor(props?: Partial<IPageMetaData>) {
-    this.pageId = props?.pageId || uuidv4();
+    this.pageId = props?.pageId || generateUniqueId();
     this.pageName = props?.pageName || "";
     this.pageDescription = props?.pageDescription || "";
     this.fields = props?.fields
@@ -106,24 +107,17 @@ export class Page {
       this.buttonPosition = newProps.buttonPosition;
   }
 
+  updateFieldProperties(fieldId: string, newProps: Partial<IFieldMetaData>) {
+    const field = this.fields.find((field) => field.fieldId === fieldId);
+    field?.updateProperties(newProps);
+  }
+
   addField(field: IFieldMetaData) {
     this.fields.push(this.createField(field));
   }
 
   insertField(Field: IFieldMetaData, index: number) {
-    const newField = this.createField({
-      ...Field,
-      rules: {
-        min: {
-          message: "Minimum value is 1",
-          value: 1,
-        },
-        max: {
-          message: "Maximum value is 10",
-          value: 10,
-        },
-      },
-    });
+    const newField = this.createField(Field);
     this.fields.splice(index, 0, newField);
     return newField;
   }
@@ -136,12 +130,17 @@ export class Page {
     this.fields = arrayMove(this.fields, activeIndex, overIndex);
   }
 
-  updateFieldProperties(fieldId: string, newProps: Partial<IFieldMetaData>) {
+  updateFieldRules(fieldId: string, newRules: Partial<RegisterOptions>) {
     const field = this.fields.find((field) => field.fieldId === fieldId);
-    field?.updateProperties(newProps);
+    field?.updateRules(newRules);
   }
 
-  createField(field: IFieldMetaData) {
+  removeFieldRule(fieldId: string, ruleName: keyof RegisterOptions) {
+    const field = this.fields.find((field) => field.fieldId === fieldId);
+    field?.removeRule(ruleName);
+  }
+
+  createField(field: IFieldMetaData): Field {
     switch (field.type) {
       case "singleline":
       case "email":
@@ -171,5 +170,46 @@ export class Page {
       prevLabel: this.prevLabel,
       buttonPosition: this.buttonPosition,
     };
+  }
+
+  getProperties(): IPropertyMetaData[] {
+    return [
+      {
+        label: "Edit Page Title",
+        id: "pageName",
+        name: "pageName",
+        value: this.pageName,
+        type: "singleline",
+      },
+
+      {
+        label: "Edit Next Button Label",
+        id: "nextLabel",
+        name: "nextLabel",
+        value: this.nextLabel,
+        type: "singleline",
+      },
+      {
+        label: "Edit Previous Button Label",
+        id: "prevLabel",
+        name: "prevLabel",
+        value: this.prevLabel,
+        type: "singleline",
+      },
+      {
+        label: "Edit Button Position",
+        id: "buttonPosition",
+        name: "buttonPosition",
+        value: this.buttonPosition,
+        hide: true,
+        type: "singlechoice",
+        options: [
+          { label: "Left", value: "left" },
+          { label: "Right", value: "right" },
+          { label: "Center", value: "center" },
+          { label: "default", value: "space-between" },
+        ],
+      },
+    ];
   }
 }

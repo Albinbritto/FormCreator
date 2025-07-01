@@ -65,7 +65,9 @@ export type PropertyPanelFieldType =
   | "select"
   | "choicesInput"
   | "validationInput"
-  | "number";
+  | "number"
+  | "singlechoice"
+  | "checkbox";
 
 export interface IPropertyMetaData {
   id: string;
@@ -73,8 +75,7 @@ export interface IPropertyMetaData {
   label: string;
   type: PropertyPanelFieldType;
   options?: SelectOption[];
-  value?: string | SelectOption[] | IValidationRule[];
+  value?: string | SelectOption[] | IValidationRule[] | boolean;
   disabled?: boolean;
-  fieldId: string;
-  pageId: string;
+  hide?: boolean;
 }

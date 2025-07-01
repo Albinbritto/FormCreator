@@ -46,6 +46,7 @@ export interface IField {
   rules?: RegisterOptions;
   options?: SelectOption[];
   properties?: FieldProperties;
+  isDropdown?: boolean;
   pageId: string;
 }
 
@@ -63,7 +64,8 @@ export type FieldType =
   | "datepicker"
   | "heading"
   | "rate"
-  | "fallback";
+  | "fallback"
+  | "multiselect";
 
 export interface FieldValidations {
   minLength?: number;

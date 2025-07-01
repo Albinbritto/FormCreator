@@ -31,9 +31,10 @@ export interface ISelect extends SelectProps {
   error?: IError;
 }
 
-export interface ICheckBox extends CheckboxProps {
+export interface ICheckBox extends Omit<CheckboxProps, "onChange"> {
   label?: ReactNode;
   name?: string;
+  onChange?: (e: boolean) => void;
 }
 
 export interface ICheckBoxGroup extends CheckboxGroupProps {

@@ -1,28 +1,25 @@
+import { useCallback } from "react";
 import FormEngine from "../../components/Form/FormEngine";
 import { useFormBuilderStore } from "../../store/FormBuilderStore";
 
 const FormPreview = () => {
-  const { formMetaData } = useFormBuilderStore();
+  const formMetaData = useFormBuilderStore((state) => state.formMetaData);
   const isMultiStep = formMetaData.pages.length > 1;
-  console.log("formMetaData", formMetaData);
+
+  console.log("Form metadata:", formMetaData.toJSON());
+
+  const handleSubmit = useCallback((data: any) => {
+    console.log("Form submitted with data:", data);
+  }, []);
+
+  const PreviewComponent = isMultiStep ? FormEngine.MultiStep : FormEngine;
 
   return (
-    <div style={{ width: "90%", margin: "1rem auto" }}>
-      {isMultiStep ? (
-        <FormEngine.MultiStep
-          dataSource={formMetaData.toJSON()}
-          onSubmit={(data) => {
-            console.log("data", data);
-          }}
-        />
-      ) : (
-        <FormEngine
-          dataSource={formMetaData.toJSON()}
-          onSubmit={(data) => {
-            console.log("data", data);
-          }}
-        />
-      )}
+    <div style={{ width: "60%", margin: "1rem auto" }}>
+      <PreviewComponent
+        dataSource={formMetaData.toJSON()}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };

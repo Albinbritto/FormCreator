@@ -7,8 +7,8 @@ import {
 } from "../pages/FormBuilder/type";
 import { Field, Form, Page } from "../models/Form";
 import { immer } from "zustand/middleware/immer";
-import { v4 as uuidv4 } from "uuid";
 import { RegisterOptions } from "react-hook-form";
+import { generateUniqueId } from "../utils/util";
 
 interface IActiveElement {
   data: Field | Page | Form | null;
@@ -22,7 +22,12 @@ interface FormBuilderState {
   updateFormElement: (element: FormElement, id: string) => void;
   insertField: (page: Page, field: IFieldMetaData, index: number) => void;
   removeField: (page: Page, fieldId: string) => void;
-  moveField: (page: Page, activeIndex: number, overIndex: number) => void;
+  moveField: (
+    uniqueId: string,
+    page: Page,
+    activeIndex: number,
+    overIndex: number
+  ) => void;
   swapFieldBetweenPage: (
     activePage: Page,
     fieldId: string,
@@ -41,7 +46,16 @@ interface FormBuilderState {
     newProps: Partial<IFieldMetaData>
   ) => void;
   removePage: (pageId: string) => void;
-  updateRules: (field: Field, newRules: Partial<RegisterOptions>) => void;
+  updateRules: (
+    page: Page,
+    fieldId: string,
+    newRules: Partial<RegisterOptions>
+  ) => void;
+  removeRule: (
+    page: Page,
+    fieldId: string,
+    rule: keyof RegisterOptions
+  ) => void;
 }
 
 export const useFormBuilderStore = create<FormBuilderState>()(
@@ -91,13 +105,14 @@ export const useFormBuilderStore = create<FormBuilderState>()(
     addPage: (page: Page, index: number) =>
       set((state) => {
         state.formMetaData.addPage(page, index);
+        const uniqueId = generateUniqueId();
         page.addField(
           page.createField({
-            fieldId: uuidv4(),
+            fieldId: uniqueId,
             type: "singleline",
             label: "untitled text",
-            fieldName: uuidv4(),
             pageId: page.pageId,
+            fieldName: `untitled text_${uniqueId}`,
           })
         );
         state.formMetaData = state.formMetaData.clone();
@@ -142,18 +157,37 @@ export const useFormBuilderStore = create<FormBuilderState>()(
           type: "field",
         };
       }),
-    updateRules: (field, newRules) =>
+    updateRules: (page, fieldId, rules) =>
       set((state) => {
-        field.updateRules(newRules);
+        page.updateFieldRules(fieldId, rules);
         state.formMetaData = state.formMetaData.clone();
+        const updatedPage = state.formMetaData.findPage(page.pageId);
+        state.activeElement = {
+          data:
+            updatedPage?.fields.find((field) => field.fieldId === fieldId) ||
+            null,
+          type: "field",
+        };
       }),
-    moveField: (page, activeIndex, overIndex) =>
+    removeRule: (page, fieldId, rule) =>
+      set((state) => {
+        page.removeFieldRule(fieldId, rule);
+        state.formMetaData = state.formMetaData.clone();
+        const updatedPage = state.formMetaData.findPage(page.pageId);
+        state.activeElement = {
+          data:
+            updatedPage?.fields.find((field) => field.fieldId === fieldId) ||
+            null,
+          type: "field",
+        };
+      }),
+    moveField: (uniqueId, page, activeIndex, overIndex) =>
       set((state) => {
         page.moveField(activeIndex, overIndex);
-        page.fields[overIndex].fieldId = uuidv4();
-        page.fields[overIndex].fieldName = `${
-          page.fields[overIndex].label
-        }_${uuidv4()}`;
+        page.fields[overIndex].fieldId = uniqueId;
+        page.fields[
+          overIndex
+        ].fieldName = `${page.fields[overIndex].label}_${uniqueId}`;
         state.activeElement = {
           data: page.fields[overIndex],
           type: "field",

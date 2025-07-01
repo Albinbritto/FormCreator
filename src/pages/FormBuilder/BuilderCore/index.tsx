@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FIELD_COMPONENT_MAP } from "../../../components/Form/constant";
 import {
   StyledBuilder,
   StyledFormFields,
   StyledFormPageName,
   StyledPageNavigation,
+  StyledPageWrapper,
 } from "../index.style";
 import SingleLineInput from "../../../components/inputs_v1/singlelineinput";
 import {
@@ -14,21 +15,20 @@ import {
 import { DroppableContainer } from "../DroppableContainer";
 import SortableElement from "../SortableElement";
 import { IFieldMetaData } from "../type";
-import AddNewPage from "../Actions/AddNewPage";
 import { Field, Page } from "../../../models/Form";
 import { useFormBuilderStore } from "../../../store/FormBuilderStore";
-import { v4 as uuidv4 } from "uuid";
-import { AiOutlineDelete } from "react-icons/ai";
-import { StyledActiveElementControl } from "../../../components/Form/index.style";
 import { Button } from "antd";
 import { ButtonPositionType } from "../../../components/Form/type";
+import { FieldControls } from "../BuilderControls/FieldControls";
+import { PageControls } from "../BuilderControls/PageControls";
+import { AddNewPage } from "../BuilderControls/AddNewPage";
 
 const BuilderCore: React.FC = () => {
-  const { formMetaData, addPage, setActiveElement, activeElement, removePage } =
+  const { formMetaData, setActiveElement, activeElement } =
     useFormBuilderStore();
   const { formId, pages } = formMetaData;
 
-  console.log("formMetaData",formMetaData);
+  console.log("inside BuilderCore....");
 
   function resetActiveField() {
     setActiveElement(null);
@@ -41,61 +41,37 @@ const BuilderCore: React.FC = () => {
     };
   }, []);
 
+  console.log("formMetaData:", formMetaData);
+
   return (
     <StyledBuilder id={formId}>
-      {pages.map((page, index) => (
-        <>
-          <div
-            key={page.pageId}
-            onClick={(e) => {
-              e.stopPropagation();
-              setActiveElement({ data: page, type: "page" });
-            }}
-            style={{
-              border: `1px solid ${
-                activeElement?.type === "page" &&
-                (activeElement.data as Page)?.pageId === page.pageId
-                  ? "rgb(143, 86, 232)"
-                  : "transparent"
-              }`,
-              borderRadius: "10px",
-              position: "relative",
-            }}
-          >
-            {activeElement?.type === "page" &&
-              (activeElement.data as Page)?.pageId === page.pageId && (
-                <StyledActiveElementControl
-                  style={{ top: "-12px", right: "5px", cursor: "pointer" }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removePage(page.pageId);
-                  }}
-                >
-                  <AiOutlineDelete className="active-element-trigger" />
-                </StyledActiveElementControl>
-              )}
-            <SortableContext
+      {pages.map((page, index) => {
+        const isActive =
+          activeElement?.type === "page" &&
+          (activeElement.data as Page)?.pageId === page.pageId;
+        return (
+          <>
+            <StyledPageWrapper
               key={page.pageId}
-              items={page.fields.map(({ fieldId }) => fieldId)}
-              strategy={verticalListSortingStrategy}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveElement({ data: page, type: "page" });
+              }}
+              isActive={isActive}
             >
-              <FormPage key={page.pageId} page={page} />
-            </SortableContext>
-          </div>
-          <AddNewPage
-            onClick={() => {
-              addPage(
-                new Page({
-                  prevLabel: "prev",
-                  nextLabel: "next",
-                  pageName: "Untitled Page",
-                }),
-                index + 1
-              );
-            }}
-          />
-        </>
-      ))}
+              {isActive && <PageControls page={page} />}
+              <SortableContext
+                key={page.pageId}
+                items={page.fields.map(({ fieldId }) => fieldId)}
+                strategy={verticalListSortingStrategy}
+              >
+                <FormPage key={page.pageId} page={page} />
+              </SortableContext>
+            </StyledPageWrapper>
+            {/* <AddNewPage index={index} /> */}
+          </>
+        );
+      })}
     </StyledBuilder>
   );
 };
@@ -166,12 +142,23 @@ const FormField: React.FC<{ field: Field; page: Page; index: number }> = ({
     pageId,
     label,
     properties,
+    isDropdown,
     type = "fallback",
     ...restProps
   } = field.toJSON();
-  const FieldRenderer = FIELD_COMPONENT_MAP[type];
-  const { insertField, removeField, activeElement, updateFieldProperties } =
-    useFormBuilderStore();
+
+  const fieldType = useMemo(() => {
+    if (isDropdown && type === "singlechoice") {
+      return "select";
+    } else if (isDropdown && type === "multichoice") {
+      return "multiselect";
+    } else {
+      return type;
+    }
+  }, [type, isDropdown]);
+
+  const FieldRenderer = FIELD_COMPONENT_MAP[fieldType];
+  const { activeElement } = useFormBuilderStore();
 
   const isActive = React.useMemo(() => {
     return (
@@ -181,28 +168,13 @@ const FormField: React.FC<{ field: Field; page: Page; index: number }> = ({
   }, [activeElement, fieldId]);
 
   return (
-    <SortableElement
-      pageId={pageId}
-      field={field}
-      handleCopy={() => {
-        const newField = { ...field.toJSON(), fieldId: uuidv4() };
-        insertField(page, newField, index + 1);
-      }}
-      handleDelete={() => {
-        removeField(page, fieldId);
-      }}
-    >
+    <SortableElement pageId={pageId} field={field}>
       {isActive && (
-        <SingleLineInput
-          value={label}
-          style={{
-            marginBottom: "0.5rem",
-            padding: "0",
-            backgroundColor: "transparent",
-          }}
-          onChange={(e) => {
-            updateFieldProperties(page, fieldId, { label: e.target.value });
-          }}
+        <FieldControls
+          activeIndex={index}
+          field={field}
+          label={label}
+          page={page}
         />
       )}
       <FieldRenderer

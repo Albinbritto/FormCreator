@@ -1,10 +1,10 @@
 import { RegisterOptions } from "react-hook-form";
 import { FieldProperties, FieldType } from "../../components/Form/type";
-import { v4 as uuidv4 } from "uuid";
 import {
   IPropertyMetaData,
   PropertyPanelFieldType,
 } from "../../pages/FormBuilder/type";
+import { generateUniqueId } from "../../utils/util";
 
 export interface IElementBase {
   fieldId: string;
@@ -43,10 +43,10 @@ export class ElementBase {
   rules: RegisterOptions;
 
   constructor(props: IElementBase) {
-    this.fieldId = props.fieldId ? props.fieldId : uuidv4();
-    this.fieldName = props.fieldName ? props.fieldName : uuidv4();
+    this.fieldId = props.fieldId;
     this.pageId = props.pageId;
     this.label = props.label || "";
+    this.fieldName = props.fieldName;
     this.type = props.type || "singleline";
     this.required = props.required || false;
     this.properties = props.properties || {};
@@ -60,6 +60,14 @@ export class ElementBase {
     }
     if (newProps.required !== undefined) {
       this.required = newProps.required;
+      if (this.required) {
+        this.rules.required = {
+          message: `${this.label} is required`,
+          value: true,
+        };
+      } else {
+        this.removeRule("required");
+      }
     }
     if (newProps.type !== undefined) this.type = newProps.type;
     if (newProps.properties) {
@@ -68,7 +76,6 @@ export class ElementBase {
   }
 
   updateRules(newRules: Partial<RegisterOptions>): void {
-    console.log("newRules", newRules);
     this.rules = {
       ...this.rules,
       ...newRules,
@@ -107,8 +114,6 @@ export class ElementBase {
         name: "type",
         value: this.type,
         type: "select",
-        fieldId: this.fieldId,
-        pageId: this.pageId,
         options: [
           {
             label: "Single Line",
@@ -146,8 +151,6 @@ export class ElementBase {
         name: "label",
         value: this.label,
         type: "singleline",
-        fieldId: this.fieldId,
-        pageId: this.pageId,
       },
       {
         label: "Placeholder",
@@ -155,18 +158,27 @@ export class ElementBase {
         name: "placeholder",
         value: this.properties?.placeholder,
         type: "singleline",
-        fieldId: this.fieldId,
-        pageId: this.pageId,
+      },
+      {
+        label: "Required",
+        id: "required",
+        name: "required",
+        value: this.required,
+        type: "checkbox",
       },
       {
         label: "Field ID",
         id: "fieldId",
         name: "fieldId",
         value: this.fieldId,
-        disabled: true,
         type: "singleline",
-        fieldId: this.fieldId,
-        pageId: this.pageId,
+      },
+      {
+        label: "Field Name",
+        id: "fieldName",
+        name: "fieldName",
+        value: this.fieldName,
+        type: "singleline",
       },
       {
         label: "Select Validation Type",
@@ -174,14 +186,11 @@ export class ElementBase {
         name: "rules",
         type: "validationInput",
         options: [
-          { label: "Required", value: "required" },
           { label: "Min Length", value: "minLength" },
           { label: "Max Length", value: "maxLength" },
           { label: "Min Value", value: "min" },
           { label: "Max Value", value: "max" },
         ],
-        fieldId: this.fieldId,
-        pageId: this.pageId,
         value: this.getValidationRules() as IValidationRule[],
       },
     ];

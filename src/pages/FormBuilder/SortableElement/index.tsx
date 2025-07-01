@@ -2,25 +2,19 @@ import React, { ReactNode, useMemo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FIELD_COMPONENT_MAP } from "../../../components/Form/constant";
-import {
-  StyledActiveElementControl,
-  StyledFormField,
-} from "../../../components/Form/index.style";
+import { StyledFormField } from "../../../components/Form/index.style";
 import { StyledSortableElementOverlay } from "../index.style";
 import { IFieldMetaData } from "../type";
 import { useFormBuilderStore } from "../../../store/FormBuilderStore";
 import { HolderOutlined } from "@ant-design/icons";
-import { AiFillSetting, AiOutlineCopy } from "react-icons/ai";
-import { AiOutlineDelete } from "react-icons/ai";
+
 import { Field } from "../../../models/Form";
 
 const SortableElement: React.FC<{
   field: Field;
   children: ReactNode;
   pageId: string;
-  handleCopy: () => void;
-  handleDelete: () => void;
-}> = ({ field, children, pageId, handleCopy, handleDelete }) => {
+}> = ({ field, children, pageId }) => {
   const { fieldId } = field;
   const {
     attributes,
@@ -67,35 +61,7 @@ const SortableElement: React.FC<{
       className="sortable-element"
     >
       {isActive && (
-        <>
-          <HolderOutlined
-            className="drag-icon"
-            {...attributes}
-            {...listeners}
-          />
-          <StyledActiveElementControl style={{ top: "-12px", right: "65px" }}>
-            <AiFillSetting />
-          </StyledActiveElementControl>
-
-          <StyledActiveElementControl
-            style={{ top: "-12px", right: "35px" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-          >
-            <AiOutlineCopy className="active-element-trigger" />
-          </StyledActiveElementControl>
-          <StyledActiveElementControl
-            style={{ top: "-12px", right: "5px" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete();
-            }}
-          >
-            <AiOutlineDelete className="active-element-trigger" />
-          </StyledActiveElementControl>
-        </>
+        <HolderOutlined className="drag-icon" {...attributes} {...listeners} />
       )}
       {children}
     </StyledFormField>

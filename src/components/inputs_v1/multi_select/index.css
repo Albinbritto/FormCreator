@@ -1,0 +1,7 @@
+.select-wrapper .ant-select {
+  width: 100%;
+}
+.ant-select-item,
+.select-wrapper .ant-select .ant-select-selector {
+  font-family: "Poppins", sans-serif;
+}

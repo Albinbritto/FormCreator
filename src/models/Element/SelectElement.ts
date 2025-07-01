@@ -74,8 +74,6 @@ export class SelectElement extends ElementBase {
         value: this.options,
         type: "choicesInput",
         disabled: true,
-        fieldId: this.fieldId,
-        pageId: this.pageId,
       },
     ];
   }

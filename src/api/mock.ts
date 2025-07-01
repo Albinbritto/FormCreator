@@ -139,27 +139,6 @@ export const FORM_ELEMENTS: FormElements = {
         ],
       },
       {
-        id: "dropdown",
-        label: "DropDown",
-        Icon: "DownSquareOutlined",
-        type: "select",
-        name: "dropdown",
-        options: [
-          {
-            label: "option 1",
-            value: "option 1",
-          },
-          {
-            label: "option 2",
-            value: "option 2",
-          },
-          {
-            label: "option 3",
-            value: "option 3",
-          },
-        ],
-      },
-      {
         id: "6609fdcc-3d6f-4ff6-bf58-97b34fded5e6",
         label: "Number",
         Icon: "NumberOutlined",
@@ -170,11 +149,6 @@ export const FORM_ELEMENTS: FormElements = {
         Icon: "StarOutlined",
         type: "rate",
         name: "rate",
-      },
-      {
-        id: "6d11773c-7f47-41d4-b3a9-89862237e49b",
-        label: "Image",
-        Icon: "PictureOutlined",
       },
     ],
   },

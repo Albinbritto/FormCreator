@@ -19,17 +19,10 @@ export const StyledFormPageWrapper = styled.div`
   row-gap: 20px;
 `;
 
-export const StyledActiveElementControl = styled.div`
-  padding: 5px;
-  position: absolute;
+export const StyledFormNavigation = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  width: 25px;
-  height: 25px;
-  background: rgb(230, 214, 255);
-  border-radius: 50%;
+  margin-top: 20px;
+  gap: 10px;
 `;
 
 export const StyledFormField = styled.div<{
@@ -44,10 +37,4 @@ export const StyledFormField = styled.div<{
     border: 1px solid rgb(143, 86, 232);
     border-radius: 8px;
     `}
-`;
-
-export const StyledFormNavigation = styled.div`
-  display: flex;
-  margin-top: 20px;
-  gap: 10px;
 `;

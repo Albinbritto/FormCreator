@@ -7,6 +7,7 @@ export const StyledFormBuilder = styled.div`
   height: inherit;
   overflow: hidden;
   width: 100%;
+  grid-template-rows: 8% 1fr;
 `;
 
 export const StyledHeader = styled.div`
@@ -124,33 +125,22 @@ export const StyledFormPage = styled.div`
   border-radius: 10px;
 `;
 
-export const StyledAddNewPage = styled.div`
-  width: 100%;
-  font-size: 0.8rem;
-  color: rgb(143, 86, 232);
-  position: relative;
-  text-align: center;
-  &::before {
-    content: "";
-    height: 1px;
-    position: absolute;
-    border: 1px dashed #d5d5d5;
-    top: 50%;
-    left: 0;
-    right: 0;
-  }
-`;
-
 export const StyledAddPageLabel = styled.span`
-  background: rgb(241, 243, 249);
   position: relative;
   z-index: 10;
   display: inline-flex;
   align-items: center;
-  background: rgb(230, 214, 255);
+  font-size: 0.8rem;
+  color: rgb(143, 86, 232);
   border-radius: 4px;
   padding: 5px 10px;
   &:hover {
     cursor: pointer;
   }
+`;
+
+export const StyledPageWrapper = styled.div<{ isActive?: boolean }>`
+  position: relative;
+  border-radius: 10px;
+  ${({ isActive }) => isActive && `border: 1px solid rgb(143, 86, 232);`}
 `;

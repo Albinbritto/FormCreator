@@ -21,6 +21,23 @@
   font-family: inherit;
 }
 
+.field-property-list .ant-list-item {
+  border-block-end: none;
+}
+
+.validation-input-list .ant-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+  border-block-end: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+.select-wrapper,
+.input-wrapper {
+  width: 100%;
+}
+
 .ant-modal,
 .ant-btn,
 .ant-list,
@@ -111,4 +128,21 @@
   background: #ebe5e5;
   font-weight: 500;
   margin: 0;
+}
+
+button.custom {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.field-controls,
+.page-controls {
+  position: absolute;
+  top: 0;
+  right: 15px;
+  margin-top: -13px;
 }

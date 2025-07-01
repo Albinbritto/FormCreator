@@ -9,6 +9,7 @@ import Rate from "../Rate";
 import DatePicker from "../inputs_v1/DatePicker";
 import Heading from "../inputs_v1/Heading";
 import { FallBack } from "../inputs_v1/Fallback";
+import MultiSelect from "../inputs_v1/multi_select";
 
 export const FIELD_COMPONENT_MAP: Record<FieldType, React.FC<any>> = {
   singleline: Input,
@@ -25,4 +26,5 @@ export const FIELD_COMPONENT_MAP: Record<FieldType, React.FC<any>> = {
   datepicker: DatePicker,
   heading: Heading,
   fallback: FallBack,
+  multiselect: MultiSelect,
 };

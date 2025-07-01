@@ -16,10 +16,14 @@ const Form: React.FC<IForm> & { Control: React.FC<IFormControl> } = ({
   style = {},
   className = "",
 }) => {
-  const methods = useForm({ defaultValues, mode: "all" });
+  const methods = useForm({
+    defaultValues,
+    mode: "all",
+  });
   return (
     <FormProvider {...methods}>
       <StyledFormContainer
+        noValidate
         onSubmit={methods.handleSubmit(onSubmit || (() => {}))}
         style={style}
         className={className}
@@ -37,18 +41,12 @@ const FormControl: React.FC<IFormControl> = ({
   rules,
 }) => {
   const { control } = useFormContext();
-  console.log("rules", rules);
+
   return (
     <Controller
       control={control}
       name={name}
-      rules={{
-        required: true,
-        min: {
-          value: 5,
-          message: "Minimum length is 5",
-        },
-      }}
+      rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState }) => {
         const { invalid, error } = fieldState;
         return cloneElement(children, {
